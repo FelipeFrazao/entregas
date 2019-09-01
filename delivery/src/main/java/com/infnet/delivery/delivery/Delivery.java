@@ -6,6 +6,8 @@ import com.infnet.delivery.client.Client;
 import com.infnet.delivery.deliveryman.DeliveryMan;
 import com.infnet.delivery.payload.Payload;
 
+import lombok.Data;
+@Data
 public class Delivery {
     private int id;
     private String senderAddress;

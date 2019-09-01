@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.infnet.delivery.delivery.Delivery;
 import com.infnet.delivery.user.User;
 
+import lombok.Data;
+@Data
 public class Client extends User {
     private ArrayList<Delivery> deliveries;
     private String defaultAddress;

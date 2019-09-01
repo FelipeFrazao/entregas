@@ -1,5 +1,8 @@
 package com.infnet.delivery.payload;
 
+import lombok.Data;
+
+@Data
 public class Payload {
     private int id;
     private float height;
