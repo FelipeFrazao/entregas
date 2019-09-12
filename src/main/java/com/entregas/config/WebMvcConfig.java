@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.entregas.entregas")
+@ComponentScan(basePackages = "com.entregas")
 public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
