@@ -1,4 +1,4 @@
-package com.entregas.entregas.config;
+package com.entregas.config;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -12,7 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
-        registry.jsp().prefix("/WEB-INF/views/").suffix(".jsp");
+        registry.jsp().prefix("/webapp/WEB-INF/views/").suffix(".jsp");
     }
 
 }

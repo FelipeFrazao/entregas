@@ -1,4 +1,4 @@
-package com.entregas.entregas.config;
+package com.entregas.config;
 
 public class HibernateConfig {
 }
