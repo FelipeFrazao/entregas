@@ -1,4 +1,4 @@
-package com.entregas.entregas;
+package com.entregas;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
