@@ -1,4 +1,4 @@
-package com.entregas;
+package com.entregas.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
