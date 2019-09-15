@@ -1,4 +1,4 @@
-package com.entregas.config;
+package com.entregas.entregas.config;
 
 public class ServletInitializer {
 }

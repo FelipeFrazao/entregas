@@ -1,4 +1,8 @@
+<<<<<<< HEAD:src/main/java/com/entregas/controllers/HelloWorldController.java
 package com.entregas.controllers;
+=======
+package com.entregas.entregas;
+>>>>>>> parent of 7e11d84... Versao inicial configurada com jsp nas views:src/main/java/com/entregas/HelloWorldController.java
 
 import com.entregas.entity.User;
 import lombok.extern.slf4j.Slf4j;
