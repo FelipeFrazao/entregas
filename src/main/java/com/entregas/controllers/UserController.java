@@ -5,14 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.entregas.services.UserService;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 
-import static com.entregas.components.UrlBuilder.HELLO_URI;
-import static com.entregas.components.UrlBuilder.REGISTER_URI;
+import static com.entregas.components.UrlBuilder.*;
 
 @Slf4j
 @Controller
@@ -39,31 +41,43 @@ public class UserController {
 
     @GetMapping(REGISTER_URI)
     public ModelAndView displayNewUserForm() {
-        ModelAndView mv = new ModelAndView("createUser");
+        ModelAndView mv = new ModelAndView("register");
         mv.addObject("headerMessage", "Add User Details");
         mv.addObject("user", User.builder().build());
         return mv;
     }
 
-    @PostMapping(REGISTER_URI)
-    public ModelAndView saveNewUser(@ModelAttribute User user, BindingResult result) {
+    @PostMapping(value = REGISTER_URI, consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = {MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ModelAndView saveNewUser(@RequestBody MultiValueMap<String, String> params, BindingResult result) {
         ModelAndView mv = new ModelAndView("redirect:" + HELLO_URI);
+        log.info(params.get("name").toString());
 
         if (result.hasErrors()) {
-            return new ModelAndView("error");
+            log.error(result.getAllErrors().get(0).getObjectName());
+            return new ModelAndView(HELLO_URI);
         }
+        User user = User.builder().name(params.get("name").toString())
+                .email(params.get("email").toString())
+                .cpf(params.get("cpf").toString())
+                .password(params.get("password").toString())
+                .phone(params.get("phone").toString())
+                .build();
         boolean isAdded = userService.saveUser(user);
         if (isAdded) {
             mv.addObject("message", "New user successfully added");
             mv.addObject("name", user.getName());
+            log.info("User added: {}", user.getName());
         } else {
-            return new ModelAndView("error");
+            log.error(result.getAllErrors().get(0).getObjectName());
+            return new ModelAndView(HELLO_URI);
         }
 
         return mv;
     }
 
-    @RequestMapping(value = "/editUser/{id}", method = RequestMethod.GET)
+
+    @GetMapping(EDIT_URI)
     public ModelAndView dosplayEditUserForm(@PathVariable Long id) {
 
         ModelAndView modelAndView = new ModelAndView("/editUser");
@@ -73,20 +87,45 @@ public class UserController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/editUser/{id}", method = RequestMethod.POST)
-    public ModelAndView updateUser(@ModelAttribute User user, BindingResult result) {
+    @PostMapping(value = EDIT_URI, consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = {MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ModelAndView updateUser(@RequestBody MultiValueMap<String, String> params, BindingResult result) {
 
         ModelAndView modelAndView = new ModelAndView("redirect:/home");
-        if(result.hasErrors()) {
-            System.out.println(result.toString());
-            return new ModelAndView("error");
-        }
-        boolean isSaved = userService.saveUser(user);
-        if (!isSaved) {
+        log.info(params.get("name").toString());
 
-            return new ModelAndView("error");
+        if (result.hasErrors()) {
+            log.error(result.getAllErrors().get(0).getObjectName());
+            return new ModelAndView(HELLO_URI);
+        }
+        User user = User.builder().name(params.get("name").toString())
+                .email(params.get("email").toString())
+                .cpf(params.get("cpf").toString())
+                .phone(params.get("phone").toString())
+                .password(params.get("password").toString())
+                .build();
+        boolean isAdded = userService.saveUser(user);
+        if (isAdded) {
+            modelAndView.addObject("name", user.getName());
+            modelAndView.addObject("message", "New user successfully added");
+            log.info("User added: {}", user.getName());
+        } else {
+            log.error(result.getAllErrors().get(0).getObjectName());
+            return new ModelAndView(HELLO_URI);
         }
         return modelAndView;
+    }
+
+    @GetMapping(USER_URI)
+    public ModelAndView viewUsers() {
+        ModelAndView mv = new ModelAndView("hello");
+        log.info("user uri");
+        List userList = userService.getAllUsers();
+        log.info(String.valueOf(userList.size()));
+        User user = (User) userList.get(0);
+        mv.addObject("name", user.getName());
+        log.info("User added: {}", user.getName());
+        return mv;
     }
 
 }

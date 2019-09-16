@@ -17,24 +17,24 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root123
       - MYSQL_DATABASE=entregas_db
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admin
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root123
     volumes:
       - /data/mysql
-
-  entregas:
-    container_name: entregas
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    depends_on:
-      - mysql-entregas
-    networks:
-      default_network:
-        aliases:
-          - entregas
-          - entregas.com
-    ports:
-      - 8087:8080
-    volumes:
-      - /data/entregas
+#
+#  entregas:
+#    container_name: entregas
+#    build:
+#      context: ./
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - mysql-entregas
+#    networks:
+#      default_network:
+#        aliases:
+#          - entregas
+#          - entregas.com
+#    ports:
+#      - 8087:8080
+#    volumes:
+#      - /data/entregas
