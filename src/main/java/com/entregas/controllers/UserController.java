@@ -1,6 +1,7 @@
 package com.entregas.controllers;
 
 import com.entregas.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.entregas.services.UserService;
@@ -9,9 +10,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
+import static com.entregas.components.UrlBuilder.HELLO_URI;
+import static com.entregas.components.UrlBuilder.REGISTER_URI;
+
+@Slf4j
 @Controller
 public class UserController {
 
@@ -34,7 +37,7 @@ public class UserController {
 //        return "home";
 //    }
 
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @GetMapping(REGISTER_URI)
     public ModelAndView displayNewUserForm() {
         ModelAndView mv = new ModelAndView("createUser");
         mv.addObject("headerMessage", "Add User Details");
@@ -42,9 +45,9 @@ public class UserController {
         return mv;
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @PostMapping(REGISTER_URI)
     public ModelAndView saveNewUser(@ModelAttribute User user, BindingResult result) {
-        ModelAndView mv = new ModelAndView("redirect:/home");
+        ModelAndView mv = new ModelAndView("redirect:" + HELLO_URI);
 
         if (result.hasErrors()) {
             return new ModelAndView("error");
@@ -52,6 +55,7 @@ public class UserController {
         boolean isAdded = userService.saveUser(user);
         if (isAdded) {
             mv.addObject("message", "New user successfully added");
+            mv.addObject("name", user.getName());
         } else {
             return new ModelAndView("error");
         }
