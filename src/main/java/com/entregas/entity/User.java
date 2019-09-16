@@ -1,10 +1,13 @@
 package com.entregas.entity;
 
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name="users")
+@Builder
+@Data
 public class User {
 
     @Id
@@ -17,7 +20,5 @@ public class User {
     private String password;
     private String phone;
     private String cpf;
-
-
 
 }
