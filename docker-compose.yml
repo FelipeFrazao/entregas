@@ -4,37 +4,50 @@ networks:
     driver: bridge
 
 services:
-  mysql-entregas:
+  db:
     container_name: db-entregas
     hostname: db
     image: mysql:8
+    volumes:
+      - ./data/mysql:/var/lib/mysql
     networks:
       default_network:
         aliases:
-          - db
+        - db
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=root123
-      - MYSQL_DATABASE=entregas_db
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=entregas-db
       - MYSQL_USER=admin
       - MYSQL_PASSWORD=admin
-    volumes:
-      - /data/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  adminer:
+    container_name: adminer-entregas
+    image: adminer
+    depends_on:
+      - db
+    networks:
+      default_network:
+        aliases:
+          - adminer
+    ports:
+      - 8080:8080
 
   entregas:
     container_name: entregas
     build:
-      context: ./
-      dockerfile: Dockerfile
+      context: .
     depends_on:
-      - mysql-entregas
+      - db
+    volumes:
+      - ./:/entregas
     networks:
       default_network:
         aliases:
-          - entregas
-          - entregas.com
+        - entregas
+        - entregas.com
     ports:
       - 8087:8080
-    volumes:
-      - /data/entregas
+    command: java -jar ./target/entregas-0.0.1-SNAPSHOT.jar
