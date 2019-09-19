@@ -8,6 +8,7 @@ target
 *.ipr
 .idea
 *.class
+data
 
 # ignore Intellij-IDEA files
 *.iml
@@ -42,3 +43,4 @@ package-lock.json
 /.idea/vcs.xml
 /.idea/workspace.xml
 /.idea/encodings.xml
+*.ibt

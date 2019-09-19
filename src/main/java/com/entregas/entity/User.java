@@ -8,6 +8,8 @@ import javax.persistence.*;
 @Table(name="users")
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -20,5 +22,7 @@ public class User {
     private String password;
     private String phone;
     private String cpf;
+    private int type = 0;
+    private boolean isActive = true;
 
 }
