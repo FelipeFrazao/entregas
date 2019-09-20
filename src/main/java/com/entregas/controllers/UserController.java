@@ -41,7 +41,7 @@ public class UserController {
 
     @GetMapping(REGISTER_URI)
     public ModelAndView displayNewUserForm() {
-        ModelAndView mv = new ModelAndView("register");
+        ModelAndView mv = new ModelAndView("registerUser");
         mv.addObject("headerMessage", "Add User Details");
         mv.addObject("user", User.builder().build());
         return mv;

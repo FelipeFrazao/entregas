@@ -1,12 +1,17 @@
 package com.entregas.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
+
 import javax.persistence.*;
 import java.util.*;
 
 @Entity
 @Table(name="clients")
 @Data
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Client extends User {
 
     @OneToMany(cascade = CascadeType.ALL)
