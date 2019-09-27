@@ -22,6 +22,7 @@ public class Payload {
     private Double height;
     private Double width;
     private Double length;
+    private String name;
     private Double weight;
     private int type;
     @ManyToOne

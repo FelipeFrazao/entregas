@@ -9,7 +9,7 @@
 <body>
 <h1>${headerMessage}</h1>
 
-<form:form method="POST" action="register" modelAttribute="user">
+<form:form method="POST" action="registeruser" modelAttribute="user">
     <table>
         <tr>
             <td><form:label path="name">Nome</form:label></td>

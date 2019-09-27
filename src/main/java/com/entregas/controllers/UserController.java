@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.entregas.services.UserService;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
@@ -12,6 +13,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.entregas.components.UrlBuilder.*;
@@ -31,13 +36,53 @@ public class UserController {
         this.userService = userService;
     }
 
-//    @GetMapping(value = {"/", "/home"})
-//    public String hello() {
-//
-//        ModelAndView mv = new ModelAndView();
-//        mv.setViewName("home");
-//        return "home";
-//    }
+    @GetMapping(LOGIN_URI)
+    public ModelAndView login(HttpServletRequest request){
+        ModelAndView modelAndView = new ModelAndView();
+        Cookie[] cookies = request.getCookies();
+        Cookie userId;
+        if (cookies != null) {
+            userId = Arrays.stream(cookies)
+                    .filter(cookie -> cookie.getName().equals("userId"))
+                    .findAny()
+                    .orElse(null);
+            if (userId != null) {
+                modelAndView.addObject("id", Long.valueOf(userId.getValue()));
+                modelAndView.setViewName("redirect:" + PROFILE_URI + userId);
+                return modelAndView;
+            }
+        }
+        modelAndView.setViewName("login");
+        modelAndView.addObject("user", User.builder().build());
+        return modelAndView;
+    }
+
+    @PostMapping(value = LOGIN_URI, consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = {MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ModelAndView loginPost(@RequestBody MultiValueMap<String, String> params, BindingResult result, HttpServletResponse response) {
+
+        ModelAndView modelAndView = new ModelAndView();
+        String email = params.getFirst("email");
+        String password = params.getFirst("password");
+        User user = userService.findUserByEmailPassword(email, password);
+        if (user != null) {
+            Cookie cookie = new Cookie("userId", String.valueOf(user.getId()));
+            cookie.setMaxAge(3 * 60 * 60);
+            response.addCookie(cookie);
+            if (user.getType() == 0) {
+                ModelAndView mv = new ModelAndView("redirect:" + PROFILE_URI);
+                mv.addObject("user", user);
+                mv.addObject("id", user.getId());
+                return mv;
+            }
+            modelAndView.addObject("name", user.getName());
+            modelAndView.addObject("user", user);
+            return modelAndView;
+        }
+        modelAndView = new ModelAndView("redirect:" + LOGIN_URI);
+        return modelAndView;
+
+    }
 
     @GetMapping(REGISTER_URI)
     public ModelAndView displayNewUserForm() {
@@ -51,17 +96,17 @@ public class UserController {
             produces = {MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ModelAndView saveNewUser(@RequestBody MultiValueMap<String, String> params, BindingResult result) {
         ModelAndView mv = new ModelAndView("redirect:" + HELLO_URI);
-        log.info(params.get("name").toString());
+        log.info(params.get("name").get(0));
 
         if (result.hasErrors()) {
             log.error(result.getAllErrors().get(0).getObjectName());
             return new ModelAndView(HELLO_URI);
         }
-        User user = User.builder().name(params.get("name").toString())
-                .email(params.get("email").toString())
-                .cpf(params.get("cpf").toString())
-                .password(params.get("password").toString())
-                .phone(params.get("phone").toString())
+        User user = User.builder().name(params.get("name").get(0))
+                .email(params.get("email").get(0))
+                .cpf(params.get("cpf").get(0))
+                .password(params.get("password").get(0))
+                .phone(params.get("phone").get(0))
                 .build();
         boolean isAdded = userService.saveUser(user);
         if (isAdded) {
@@ -91,18 +136,18 @@ public class UserController {
             produces = {MediaType.APPLICATION_ATOM_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public ModelAndView updateUser(@RequestBody MultiValueMap<String, String> params, BindingResult result) {
 
-        ModelAndView modelAndView = new ModelAndView("redirect:/home");
+        ModelAndView modelAndView = new ModelAndView("redirect:" + PROFILE_URI);
         log.info(params.get("name").toString());
 
         if (result.hasErrors()) {
             log.error(result.getAllErrors().get(0).getObjectName());
-            return new ModelAndView(HELLO_URI);
+            return new ModelAndView(EDIT_URI);
         }
-        User user = User.builder().name(params.get("name").toString())
-                .email(params.get("email").toString())
-                .cpf(params.get("cpf").toString())
-                .phone(params.get("phone").toString())
-                .password(params.get("password").toString())
+        User user = User.builder().name(params.get("name").get(0))
+                .email(params.get("email").get(0))
+                .password(params.get("password").get(0))
+                .cpf(params.get("cpf").get(0))
+                .phone(params.get("phone").get(0))
                 .build();
         boolean isAdded = userService.saveUser(user);
         if (isAdded) {
@@ -111,7 +156,7 @@ public class UserController {
             log.info("User added: {}", user.getName());
         } else {
             log.error(result.getAllErrors().get(0).getObjectName());
-            return new ModelAndView(HELLO_URI);
+            return new ModelAndView(EDIT_URI);
         }
         return modelAndView;
     }

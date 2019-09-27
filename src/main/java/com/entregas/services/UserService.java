@@ -15,10 +15,6 @@ public class UserService {
 
     private UserRepository userRepository;
 
-    public UserService() {
-
-    }
-
     @Autowired
     public UserService(UserRepository userRepository) {
         super();
@@ -36,6 +32,14 @@ public class UserService {
 
         User user = (User) userRepository.findById(id).get();
         return user;
+    }
+
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User findUserByEmailPassword(String email, String password) {
+        return userRepository.findByEmailAndPassword(email, password);
     }
 
     public boolean saveUser(User user) {
@@ -58,4 +62,5 @@ public class UserService {
             return false;
         }
     }
+
 }

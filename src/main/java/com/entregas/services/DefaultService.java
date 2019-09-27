@@ -9,7 +9,7 @@ public abstract class DefaultService {
 
     public DefaultService() {}
 
-    private JpaRepository repository;
+    protected JpaRepository repository;
 
     public DefaultService(JpaRepository repository) {
         this.repository = repository;

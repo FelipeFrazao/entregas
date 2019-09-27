@@ -9,5 +9,7 @@ public class UrlBuilder {
     public static final String USER_URI = "/user";
     public static final String REGISTER_URI = "/registeruser";
     public static final String EDIT_URI = "/editUser/{id}";
-    public static final String REGISTER_CLIENT_URI = "/register/";
+    public static final String REGISTER_CLIENT_URI = "/register";
+    public static final String LOGIN_URI = "/login";
+    public static final String PROFILE_URI = "/profile/{id}";
 }
